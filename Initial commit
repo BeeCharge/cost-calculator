@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>韓元轉台幣計算器</title>
+<style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 400px; margin: auto; }
+    input, select { margin: 10px 0; padding: 10px; width: 100%; box-sizing: border-box; }
+    button { padding: 15px; width: 100%; background: #4CAF50; color: white; border: none; cursor: pointer; }
+    button:hover { background: #45a049; }
+    h3 { margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<h2>韓元轉台幣計算器</h2>
+
+<label for="krwAmount">輸入商品金額（韓元）：</label>
+<input type="number" id="krwAmount" placeholder="輸入金額（韓元）">
+
+<label for="weight">輸入物品重量（克）：</label>
+<input type="number" id="weight" placeholder="輸入重量（公克）">
+
+<label for="category">選擇物品類別：</label>
+<select id="category">
+    <option value="35">衣鞋（35 元台幣/kg）</option>
+    <option value="70">食品（70 元台幣/kg）</option>
+    <option value="50">彩妝（50 元台幣/kg）</option>
+    <option value="60">飾品（60 元台幣/kg）</option>
+</select>
+
+<label for="exchangeRate">輸入匯率（1 韓元 = ? 台幣）：</label>
+<input type="number" id="exchangeRate" placeholder="輸入匯率" value="0.024">
+
+<label for="proxyService">是否需要代購服務（3% 費用）：</label>
+<input type="checkbox" id="proxyService">
+
+<button onclick="calculateTotal()">計算總金額並轉換為台幣</button>
+
+<h3 id="result">總金額：0 韓元，轉換後為 0 台幣（包含關稅與代購費）</h3>
+
+<script>
+function calculateTotal() {
+    const krwAmount = parseFloat(document.getElementById('krwAmount').value) || 0;
+    const weight = parseFloat(document.getElementById('weight').value) || 0;
+    const exchangeRate = parseFloat(document.getElementById('exchangeRate').value) || 0.024;
+    const categoryTaxRate = parseFloat(document.getElementById('category').value) || 0;
+    const proxyService = document.getElementById('proxyService').checked;
+
+    // 計算運費：每公斤 6600 韓元，重量以公克輸入，需要轉換為公斤
+    const shippingCost = (weight / 1000) * 6600;
+    const totalKrw = krwAmount + shippingCost;
+
+    // 計算關稅：根據選擇的類別，按台幣/kg 計算
+    const taxCost = (weight / 1000) * categoryTaxRate;
+
+    // 計算代購費用：如果勾選了代購，則增加 3% 的商品金額
+    const proxyFee = proxyService ? krwAmount * 0.03 : 0;
+    const finalKrwAmount = totalKrw + proxyFee;
+
+    // 轉換為台幣金額
+    const totalTwd = finalKrwAmount * exchangeRate + taxCost;
+
+    // 顯示結果
+    document.getElementById('result').textContent = `總金額：${finalKrwAmount.toFixed(2)} 韓元，轉換後為 ${totalTwd.toFixed(2)} 台幣（包含關稅與代購費）`;
+}
+</script>
+
+</body>
+</html>
